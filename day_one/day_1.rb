@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative('input_reader')
+require_relative('../input_reader')
 
 class DayOne
   attr_reader(:input, :size_one, :size_two)
 
-  def initialize(file_name: 'day_1.txt')
-    @input = InputReader.new(file_name).read_input
+  def initialize
+    @input = InputReader.new.read_input
     @stack_one = part_one
     @size_one = @stack_one.size
     @stack_two = part_two
@@ -15,10 +15,7 @@ class DayOne
 
   def part_one
     tracker_stack, increment_stack = init_stacks
-    input.each do |line|
-      increment_stack.push(line.to_i) if !tracker_stack.last.nil? && line.to_i > tracker_stack.last
-      tracker_stack.push(line.to_i)
-    end
+    input.each {|line| update_tracker_stack(line.to_i, tracker_stack, increment_stack) }
     increment_stack
   end
 
@@ -46,13 +43,16 @@ class DayOne
   end
 
   def inject_sum(sum_stack, increment_stack, tracker_stack)
-    sum = sum_stack.inject(:+)
-    increment_stack.push(sum) if !tracker_stack.last.nil? && sum > tracker_stack.last
-    tracker_stack.push(sum)
+    update_tracker_stack(sum_stack.inject(:+), tracker_stack, increment_stack)
+  end
+
+  def update_tracker_stack(value, tracker_stack, increment_stack)
+    increment_stack.push(value) if !tracker_stack.last.nil? && value > tracker_stack.last
+    tracker_stack.push(value)
   end
 end
 
-puts("Sample part 1: #{DayOne.new(file_name: 'day_1_sample.txt').size_one}")
+puts("Sample part 1: #{DayOne.new.size_one}")
 puts("Full part 1: #{DayOne.new.size_one}")
-puts("Sample part 2: #{DayOne.new(file_name: 'day_1_sample.txt').size_two}")
+puts("Sample part 2: #{DayOne.new.size_two}")
 puts("Full part 2: #{DayOne.new.size_two}")
