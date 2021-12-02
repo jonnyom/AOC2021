@@ -6,8 +6,7 @@ class DayTwo < BaseDay
   attr_accessor(:horizontal_position, :depth, :aim, :final_position)
 
   def initialize(sample: false, part: 'one')
-    super(sample: sample)
-    @part = part
+    super(sample: sample, part: part)
     @horizontal_position = 0
     @depth = 0
     @aim = 0
@@ -24,7 +23,7 @@ class DayTwo < BaseDay
   def update(position)
     position, count = position.split
     attribute, operator = fetch_operator[position.to_sym]
-    send("update_part_#{@part}".to_sym, attribute, operator, count.to_i)
+    send("update_part_#{part}".to_sym, attribute, operator, count.to_i)
   end
 
   def update_part_one(attribute, operator, count)
@@ -47,7 +46,7 @@ class DayTwo < BaseDay
   end
 
   def depth_or_aim
-    return :depth if @part == 'one'
+    return :depth if part_one?
 
     :aim
   end
