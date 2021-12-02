@@ -3,9 +3,9 @@
 class InputReader
   attr_reader(:file_name)
 
-  def initialize
+  def initialize(sample: false)
     dir, file = caller.last.split(':').first.split('/')
-    @file_name = "#{dir}/inputs/#{file.split('.').first}.txt"
+    @file_name = "#{dir}/inputs/#{file.split('.').first}#{sample ? '_sample' : ''}.txt"
   end
 
   def read_input

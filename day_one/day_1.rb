@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative('../input_reader')
+require_relative('../base_day')
 
-class DayOne
-  attr_reader(:input, :size_one, :size_two)
+class DayOne < BaseDay
+  attr_reader(:size_one, :size_two)
 
   def initialize
-    @input = InputReader.new.read_input
+    super
     @stack_one = part_one
     @size_one = @stack_one.size
     @stack_two = part_two
