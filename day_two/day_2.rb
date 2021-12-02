@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require('pry')
 require_relative('../base_day')
 
 class DayTwo < BaseDay
