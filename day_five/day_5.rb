@@ -21,8 +21,7 @@ class Day5 < BaseDay
 
   def populate_graph
     positions = build_positions
-    binding.pry
-    positions.each {|position| position.each {|point| @graph.find(point).overlapped } }
+    positions.each {|position| position.each {|point| @graph.find(point)&.overlapped } }
   end
 
   def build_positions
@@ -38,12 +37,26 @@ class Day5 < BaseDay
 
   def find_position(x1, y1, x2, y2)
     if x1 == x2
-      y1 > y2 ? y1.downto(y2).map {|y| build_point(x1, y) } : y1.upto(y2).map {|y| build_point(x1, y) }
+      build_x_range(x1, y1, y2)
     elsif y1 == y2
-      x1 > x2 ? x1.downto(x2).map {|x| build_point(x, y1) } : x1.upto(x2).map {|x| build_point(x, y1) }
+      build_y_range(y1, x1, x2)
     else
-      []
+      part_two? ? find_part_two_position(x1, y1, x2, y2) : []
     end
+  end
+
+  def build_x_range(x, y1, y2)
+    y1 > y2 ? y1.downto(y2).map {|y| build_point(x, y) } : y1.upto(y2).map {|y| build_point(x, y) }
+  end
+
+  def build_y_range(y, x1, x2)
+    x1 > x2 ? x1.downto(x2).map {|x| build_point(x, y) } : x1.upto(x2).map {|x| build_point(x, y) }
+  end
+
+  def find_part_two_position(x1, y1, x2, y2)
+    x_vals = x1 > x2 ? x1.downto(x2).to_a : x1.upto(x2).to_a
+    y_vals = y1 > y2 ? y1.downto(y2).to_a : y1.upto(y2).to_a
+    x_vals.each_with_index.map {|x, index| build_point(x, y_vals[index]) }
   end
 
   def build_point(x, y)
@@ -53,3 +66,5 @@ end
 
 puts "Day 5 sample: #{Day5.new(sample: true, part: 'one').danger_size}"
 puts "Day 5: #{Day5.new(sample: false, part: 'one').danger_size}"
+puts "Day 5 sample pt 2: #{Day5.new(sample: true, part: 'two').danger_size}"
+puts "Day 5 pt 2: #{Day5.new(sample: false, part: 'two').danger_size}"
