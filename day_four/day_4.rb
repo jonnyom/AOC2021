@@ -13,11 +13,11 @@ class Day4 < BaseDay
     @boards = build_boards
     @winning_board = nil
     @last_number = nil
-    run(part)
+    run
     @winning_score = @winning_board.score(@last_number)
   end
 
-  def run(part)
+  def run
     board_iterator do |number, board|
       next if board.winner
 
@@ -25,7 +25,7 @@ class Day4 < BaseDay
       board.check_number(number)
 
       if board.full_row?
-        return @winning_board = board if part == 'one'
+        return @winning_board = board if part_one?
 
         board.winner = true
         @winning_board = board if boards.reject {|b| b.id == board.id }.all?(&:winner)
