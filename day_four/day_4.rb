@@ -13,24 +13,31 @@ class Day4 < BaseDay
     @boards = build_boards
     @winning_board = nil
     @last_number = nil
-    run
-    @winning_score = winning_board.score(@last_number)
+    run(part)
+    @winning_score = @winning_board.score(@last_number)
   end
 
-  def run
-    bingo_numbers.each do |number|
-      boards.each do |board|
-        board.check_number(number)
+  def run(part)
+    board_iterator do |number, board|
+      next if board.winner
 
-        if board.full_row?
-          @last_number = number
-          return @winning_board = board
-        end
+      @last_number = number
+      board.check_number(number)
+
+      if board.full_row?
+        return @winning_board = board if part == 'one'
+
+        board.winner = true
+        @winning_board = board if boards.reject {|b| b.id == board.id }.all?(&:winner)
       end
     end
   end
 
   private
+
+  def board_iterator(&block)
+    bingo_numbers.each {|number| boards.each {|board| yield(number, board) } }
+  end
 
   def build_boards
     built_boards = []
@@ -52,5 +59,7 @@ class Day4 < BaseDay
   end
 end
 
-puts "Day 4 sample: #{Day4.new(sample: true, part: 'one').winning_score}"
+puts "Day 4 sample one: #{Day4.new(sample: true, part: 'one').winning_score}"
 puts "Day 4 part one: #{Day4.new(sample: false, part: 'one').winning_score}"
+puts "Day 4 sample two: #{Day4.new(sample: true, part: 'two').winning_score}"
+puts "Day 4 part two: #{Day4.new(sample: false, part: 'two').winning_score}"

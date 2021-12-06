@@ -5,12 +5,13 @@ require_relative('column')
 require('securerandom')
 
 class Board
-  attr_accessor(:rows, :id, :columns)
+  attr_accessor(:rows, :id, :columns, :winner)
 
   def initialize
     @rows = []
     @columns = 5.times.map { Column.new }
     @id = SecureRandom.uuid
+    @winner = false
   end
 
   def add_row_and_columns(row)
@@ -28,16 +29,24 @@ class Board
   end
 
   def check_number(value)
-    columns.each {|column| column.find_value(value) }
     rows.each {|row| row.find_value(value) }
+    columns.each {|column| column.find_value(value) }
   end
 
   def full_row?
-    columns.any?(&:full?) || rows.any?(&:full?)
+    full_column || full_row
+  end
+
+  def full_column
+    @full_column ||= columns.find(&:full?)
+  end
+
+  def full_row
+    @full_row ||= rows.find(&:full?)
   end
 
   def score(last_number)
-    unmarked_values * last_number.to_i
+    unmarked_values.to_i * last_number.to_i
   end
 
   def unmarked_values

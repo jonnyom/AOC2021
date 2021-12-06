@@ -1,9 +1,9 @@
-#  frozen_string_literal: true
+# frozen_string_literal: true
 
 class BoardElement
-  attr_accessor(:cells)
+  attr_accessor(:cells, :id)
 
-  def initialize
+  def initialize(*_args)
     @cells = []
   end
 
