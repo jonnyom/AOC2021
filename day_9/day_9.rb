@@ -6,32 +6,58 @@ class Day9 < BaseDay
   private
 
   def part_one_solution
-    res =
-      matrix.each_with_index.flat_map do |row, row_ix|
-        row.each_with_index.map do |elem, column_ix|
-          top = fetch_location(row_ix, column_ix - 1)
-          bottom = fetch_location(row_ix, column_ix + 1)
-          left = fetch_location(row_ix - 1, column_ix)
-          right = fetch_location(row_ix + 1, column_ix)
-          [row_ix, column_ix] if [top, bottom, left, right].compact.all? {|n| elem < n }
-        end
-      end
-    heights = res.compact.map {|x, y| matrix[x][y] }
+    heights = low_points.map {|x, y| matrix[x][y] }
     heights.map {|h| h + 1 }.sum
   end
 
-  def fetch_location(row, column)
-    return if row.negative?
+  def fetch_location(row_ix, column)
+    return if row_ix.negative?
     return if column.negative?
 
-    row = matrix[row]
+    row = matrix[row_ix]
     return if row.nil?
 
     row[column]
   end
 
   def part_two_solution
-    nil
+    basins =
+      low_points.map do |low_point|
+        basin = []
+        find_basin(low_point.first, low_point.last, basin)
+        basin
+      end
+    basins.map(&:size).sort.reverse[0...3].inject(:*)
+  end
+
+  def find_basin(row_ix, column_ix, basin)
+    return basin if fetch_location(row_ix, column_ix).nil? || fetch_location(row_ix, column_ix) == 9
+
+    basin << matrix[row_ix][column_ix]
+    matrix[row_ix][column_ix] = 9
+    find_basin(row_ix - 1, column_ix, basin)
+    find_basin(row_ix + 1, column_ix, basin)
+    find_basin(row_ix, column_ix - 1, basin)
+    find_basin(row_ix, column_ix + 1, basin)
+  end
+
+  def low_points
+    @low_points ||=
+      matrix
+      .each_with_index
+      .flat_map do |row, row_ix|
+        row.each_with_index.map {|elem, column_ix| [row_ix, column_ix] if locations(row_ix, column_ix).compact.all? {|n| elem < n } }
+      end
+      .compact
+  end
+
+  def locations(row_ix, column_ix)
+    [
+      fetch_location(row_ix, column_ix - 1),
+      fetch_location(row_ix, column_ix + 1),
+      fetch_location(row_ix - 1, column_ix),
+      fetch_location(row_ix + 1, column_ix)
+    ]
   end
 
   def matrix
@@ -39,5 +65,7 @@ class Day9 < BaseDay
   end
 end
 
-# puts "Day 9 pt 1 sample: #{Day9.new(sample: true, part: 'one').solution}"
+puts "Day 9 pt 1 sample: #{Day9.new(sample: true, part: 'one').solution}"
 puts "Day 9 pt 1: #{Day9.new(sample: false, part: 'one').solution}"
+puts "Day 9 pt 2 sample: #{Day9.new(sample: true, part: 'two').solution}"
+puts "Day 9 pt 2: #{Day9.new(sample: false, part: 'two').solution}"
