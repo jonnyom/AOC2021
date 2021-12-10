@@ -14,7 +14,7 @@ class Day10 < BaseDay
         e.message
       end
     invalid_symbols = invalid_symbols.compact
-    invalid_symbols.sum {|symbol| part_one_scores[symbol] }
+    invalid_symbols.sum {|symbol| score_map[symbol] }
   end
 
   def part_two_solution
@@ -31,7 +31,7 @@ class Day10 < BaseDay
     score = 0
     match.each do |symbol|
       score *= 5
-      score += part_two_scores[symbol]
+      score += score_map[symbol]
     end
     score
   end
@@ -44,12 +44,8 @@ class Day10 < BaseDay
     (sorted[(len - 1) / 2] + sorted[len / 2]) / 2
   end
 
-  def part_one_scores
-    { '}' => 1197, ')' => 3, '>' => 25_137, ']' => 57 }
-  end
-
-  def part_two_scores
-    { '}' => 3, ')' => 1, '>' => 4, ']' => 2 }
+  def score_map
+    { '}' => part_one? ? 1197 : 3, ')' => part_one? ? 3 : 1, '>' => part_one? ? 25_137 : 4, ']' => part_one? ? 57 : 2 }
   end
 
   def parse_line(line)
