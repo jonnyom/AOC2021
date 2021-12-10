@@ -14,16 +14,47 @@ class Day10 < BaseDay
         e.message
       end
     invalid_symbols = invalid_symbols.compact
-    invalid_symbols.sum {|symbol| scores[symbol] }
+    invalid_symbols.sum {|symbol| part_one_scores[symbol] }
   end
 
-  def scores
+  def part_two_solution
+    matches =
+      input.map do |line|
+        parse_line(line.chomp)
+      rescue ArgumentError
+        next
+      end
+    scores =
+      matches.map do |match|
+        score = 0
+        match.each do |symbol|
+          score *= 5
+          score += part_two_scores[symbol]
+        end
+      end
+    median(scores)
+  end
+
+  def median(array)
+    return nil if array.empty?
+
+    sorted = array.sort
+    len = sorted.length
+    (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
+  end
+
+  def part_one_scores
     { '}' => 1197, ')' => 3, '>' => 25_137, ']' => 57 }
+  end
+
+  def part_two_scores
+    { '}' => 3, ')' => 1, '>' => 4, ']' => 2 }
   end
 
   def parse_line(line)
     stack = []
-    line.chars.each {|symbol| invalid_symbol = handle_symbol(symbol, stack) }
+    line.chars.each {|symbol| handle_symbol(symbol, stack) }
+    complete_invalid_line(stack) unless stack.empty?
   end
 
   def handle_symbol(symbol, syntax_stack)
@@ -31,10 +62,10 @@ class Day10 < BaseDay
     return symbol if syntax_stack.empty?
     return if opener?(symbol)
 
-    check_for_closer(symbol, syntax_stack)
+    check_corrupted_line(symbol, syntax_stack)
   end
 
-  def check_for_closer(symbol, syntax_stack)
+  def check_corrupted_line(symbol, syntax_stack)
     case symbol
     when ')'
       raise_for(symbol, syntax_stack.pop, ['[', '{', '<'])
@@ -45,6 +76,16 @@ class Day10 < BaseDay
     when '>'
       raise_for(symbol, syntax_stack.pop, ['(', '{', '['])
     end
+  end
+
+  def complete_invalid_line(syntax_stack)
+    matches = []
+    matchs.push(match_char[syntax_stack.pop]) until syntax_stack.empty?
+    matches
+  end
+
+  def match_char
+    { '[' => ']', '<' => '>', '{' => '}', '(' => ')' }
   end
 
   def raise_for(symbol, val, invalid_symbols)
@@ -62,3 +103,4 @@ end
 
 puts "Day 10 pt 1 sample: #{Day10.new(sample: true, part: 'one').solution}"
 puts "Day 10 pt 1: #{Day10.new(sample: false, part: 'one').solution}"
+puts "Day 10 pt 2 sample: #{Day10.new(sample: true, part: 'two').solution}"
