@@ -24,15 +24,16 @@ class Day10 < BaseDay
       rescue ArgumentError
         next
       end
-    scores =
-      matches.map do |match|
-        score = 0
-        match.each do |symbol|
-          score *= 5
-          score += part_two_scores[symbol]
-        end
-      end
-    median(scores)
+    median(matches.compact.map {|match| calculate_score(match) })
+  end
+
+  def calculate_score(match)
+    score = 0
+    match.each do |symbol|
+      score *= 5
+      score += part_two_scores[symbol]
+    end
+    score
   end
 
   def median(array)
@@ -40,7 +41,7 @@ class Day10 < BaseDay
 
     sorted = array.sort
     len = sorted.length
-    (sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0
+    (sorted[(len - 1) / 2] + sorted[len / 2]) / 2
   end
 
   def part_one_scores
@@ -80,7 +81,7 @@ class Day10 < BaseDay
 
   def complete_invalid_line(syntax_stack)
     matches = []
-    matchs.push(match_char[syntax_stack.pop]) until syntax_stack.empty?
+    matches.push(match_char[syntax_stack.pop]) until syntax_stack.empty?
     matches
   end
 
@@ -104,3 +105,4 @@ end
 puts "Day 10 pt 1 sample: #{Day10.new(sample: true, part: 'one').solution}"
 puts "Day 10 pt 1: #{Day10.new(sample: false, part: 'one').solution}"
 puts "Day 10 pt 2 sample: #{Day10.new(sample: true, part: 'two').solution}"
+puts "Day 10 pt 2 sample: #{Day10.new(sample: false, part: 'two').solution}"
