@@ -19,4 +19,14 @@ class BaseDay
   def part_two?
     part == 'two'
   end
+
+  def fetch_location(row_ix, column, matrix)
+    return if row_ix.negative?
+    return if column.negative?
+
+    row = matrix[row_ix]
+    return if row.nil?
+
+    row[column]
+  end
 end

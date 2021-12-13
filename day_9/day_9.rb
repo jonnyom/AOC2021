@@ -10,16 +10,6 @@ class Day9 < BaseDay
     heights.map {|h| h + 1 }.sum
   end
 
-  def fetch_location(row_ix, column)
-    return if row_ix.negative?
-    return if column.negative?
-
-    row = matrix[row_ix]
-    return if row.nil?
-
-    row[column]
-  end
-
   def part_two_solution
     basins =
       low_points.map do |low_point|
@@ -31,7 +21,7 @@ class Day9 < BaseDay
   end
 
   def find_basin(row_ix, column_ix, basin)
-    return basin if fetch_location(row_ix, column_ix).nil? || fetch_location(row_ix, column_ix) == 9
+    return basin if fetch_location(row_ix, column_ix, matrix).nil? || fetch_location(row_ix, column_ix, matrix) == 9
 
     basin << matrix[row_ix][column_ix]
     matrix[row_ix][column_ix] = 9
@@ -53,10 +43,10 @@ class Day9 < BaseDay
 
   def locations(row_ix, column_ix)
     [
-      fetch_location(row_ix, column_ix - 1),
-      fetch_location(row_ix, column_ix + 1),
-      fetch_location(row_ix - 1, column_ix),
-      fetch_location(row_ix + 1, column_ix)
+      fetch_location(row_ix, column_ix - 1, matrix),
+      fetch_location(row_ix, column_ix + 1, matrix),
+      fetch_location(row_ix - 1, column_ix, matrix),
+      fetch_location(row_ix + 1, column_ix, matrix)
     ]
   end
 
