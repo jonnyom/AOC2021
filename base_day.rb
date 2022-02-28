@@ -7,7 +7,7 @@ class BaseDay
   attr_reader(:input, :part, :solution)
 
   def initialize(sample: false, part: 'one')
-    @input = InputReader.new(sample: sample).read_input
+    @input = InputReader.new(sample:).read_input
     @part = part
     @solution = send("part_#{part}_solution")
   end
